@@ -9,9 +9,24 @@ class Contact
     }
 }
 
+class User
+{
+    constructor(fName = "", lName = "", username = "", email = "", password = "")
+    {
+        this.fName = fName;
+        this.lName = lName;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+}
 
 
 
+
+//KYLE JAMES
+//100704048
+//2020-03-06
 "use strict";
 //IIFE - Immediately Invoked Function Expression
 // mean? -> anonymous self-executing function
@@ -241,6 +256,7 @@ let app;
     function DisplayLoginContent()
     {
         document.title = "WEBD6201 - Login";
+        document.getElementById("submitButton").addEventListener("click", InsertUsername, true);
 
         $("#loginForm").submit  ((e)=>
         {
@@ -250,7 +266,6 @@ let app;
             $("#loginForm")[0].reset();
             $("#login").hide();
             $("#logout").show();
-
         });
 
     }
@@ -258,8 +273,15 @@ let app;
     function DisplayRegisterContent()
     {
         document.title = "WEBD6201 - Register";
+        CreateDiv();
+        document.getElementById("FirstName").addEventListener("change", CheckNames, true);
+        document.getElementById("lastName").addEventListener("change", CheckNames, true);
+        document.getElementById("emailAddress").addEventListener("change", CheckEmail, true);
+        document.getElementById("password").addEventListener("change", CheckPassword, true);
+        document.getElementById("confirmPassword").addEventListener("change", CheckPassword, true);
+        document.getElementById("submitButton").setAttribute("type", "button");
+        document.getElementById("submitButton").addEventListener("click", AddNewUser, true);
     }
-
     /**
      * Main Program entry point is here
      *
@@ -268,9 +290,150 @@ let app;
     {
        
     }
-    
-    
 
+    function InsertUsername()
+    {
+        if((document.getElementById("contactName").value != "") && (document.getElementById("password").value != ""))
+        {
+            if(!document.getElementById("username"))
+            {
+                var item = document.createElement("li");
+                item.setAttribute("id", "username");
+                item.setAttribute("class", "nav-item");
+                item.innerHTML = "<a class=\"nav-link\"><i class=\"fas fa-user-circle\"></i>" +  document.getElementById("contactName").value + "</a>";
+                document.getElementById("contact").parentNode.insertBefore(item, document.getElementById("logout"));
+            }
+        }
+    }
+
+    function CreateDiv()
+    {
+        var item = document.createElement("div");
+        item.setAttribute("id", "ErrorMessage");
+        item.setAttribute("visible", "false");
+        document.getElementById("registerForm").appendChild(item);
+        var fName = document.createElement("p");
+        fName.setAttribute("id", "fNameChecker");
+        document.getElementById("ErrorMessage").appendChild(fName);
+        var lName = document.createElement("p");
+        lName.setAttribute("id", "lNameChecker");
+        document.getElementById("ErrorMessage").appendChild(lName);
+        var emailLen = document.createElement("p");
+        emailLen.setAttribute("id", "emailCheckerLength");
+        document.getElementById("ErrorMessage").appendChild(emailLen);
+        var emailSym = document.createElement("p");
+        emailSym.setAttribute("id", "emailCheckerSymbol");
+        document.getElementById("ErrorMessage").appendChild(emailSym);
+        var pass = document.createElement("p");
+        pass.setAttribute("id", "passwordChecker");
+        document.getElementById("ErrorMessage").appendChild(pass);
+        var passConf = document.createElement("p");
+        passConf.setAttribute("id", "passwordConfirmationChecker");
+        document.getElementById("ErrorMessage").appendChild(passConf);
+        var passMissmatch = document.createElement("p");
+        passMissmatch.setAttribute("id", "passwordMissmatchChecker");
+        document.getElementById("ErrorMessage").appendChild(passMissmatch);
+    }
+
+    function CheckNames()
+    {
+        if(document.getElementById("FirstName").value != "")
+        {
+            if(document.getElementById("FirstName").value.length < 2)
+            {
+                document.getElementById("fNameChecker").innerText = "First name is too short.";
+                document.getElementById("ErrorMessage").setAttribute("visible","true");
+            }
+            if(document.getElementById("FirstName").value.length >= 2)
+            {
+                document.getElementById("fNameChecker").innerText = "";
+            }
+        }
+        if(document.getElementById("lastName").value != "")
+        {
+            if(document.getElementById("lastName").value.length < 2)
+            {
+                document.getElementById("lNameChecker").innerText = "Last name is too short."
+                document.getElementById("ErrorMessage").setAttribute("visible", "true");
+            }
+            if(document.getElementById("lastName").value.length >= 2)
+            {
+                document.getElementById("lNameChecker").innerText = "";
+            }
+        }
+        CheckIfErrorMessageNeedsToBeHidden();
+    }
+
+    function CheckEmail()
+    {
+        if(document.getElementById("emailAddress").value.length < 8)
+        {
+            document.getElementById("emailCheckerLength").innerText = "Email is too short. (min. 8 characters)";
+            document.getElementById("ErrorMessage").setAttribute("visible", "true");
+        }
+        if(document.getElementById("emailAddress").value.length >= 8)
+        {
+            document.getElementById("emailCheckerLength").innerText = "";
+        }
+        if(!document.getElementById("emailAddress").value.includes("@"))
+        {
+            document.getElementById("emailCheckerSymbol").innerText = "Email does not contain '@'.";
+            document.getElementById("ErrorMessage").setAttribute("visible", "true");
+        }
+        if(document.getElementById("emailAddress").value.includes("@"))
+        {
+            document.getElementById("emailCheckerSymbol").innerText = "";
+        }
+        CheckIfErrorMessageNeedsToBeHidden();
+    }
+
+    function CheckPassword()
+    {
+        if(document.getElementById("password").value.length < 6)
+        {
+            document.getElementById("passwordChecker").innerText = "Password is too short. (min. 6 characters)";
+            document.getElementById("ErrorMessage").setAttribute("visible", "true");
+        }
+        if(document.getElementById("password").value.length >= 6)
+        {
+            document.getElementById("passwordChecker").innerText = "";
+        }
+        if(document.getElementById("confirmPassword").value.length < 6)
+        {
+            document.getElementById("passwordConfirmationChecker").innerText = "Confirmation Password is too short. (min. 6 characters)";
+            document.getElementById("ErrorMessage").setAttribute("visible", "true");
+        }
+        if(document.getElementById("confirmPassword").value.length >= 6)
+        {
+            document.getElementById("passwordConfirmationChecker").innerText = "";
+        }
+        if((document.getElementById("password").value != document.getElementById("confirmPassword").value) && (document.getElementById("passwordChecker").innerText == "" && document.getElementById("passwordConfirmationChecker").innerText == ""))
+        {
+            document.getElementById("passwordMissmatchChecker").innerText = "Passwords don't match.";
+            document.getElementById("ErrorMessage").setAttribute("visible", "true");
+        }
+        if((document.getElementById("password").value == document.getElementById("confirmPassword").value) && (document.getElementById("passwordChecker").innerText == "" && document.getElementById("passwordConfirmationChecker").innerText == ""))
+        {
+            document.getElementById("passwordMissmatchChecker").innerText = "";
+        }
+        CheckIfErrorMessageNeedsToBeHidden();
+    }
+
+    function CheckIfErrorMessageNeedsToBeHidden()
+    {  
+        if(document.getElementById("fNameChecker").innerText == "" && document.getElementById("lNameChecker").innerText == "" && document.getElementById("emailCheckerLength").innerText == "" && document.getElementById("emailCheckerSymbol").innerText == "" && document.getElementById("passwordChecker").innerText == "" && document.getElementById("passwordConfirmationChecker").innerText == "" && document.getElementById("passwordMissmatchChecker").innerText == "")
+        {
+            document.getElementById("ErrorMessage").setAttribute("visible", "false");
+        }
+    }
+
+    function AddNewUser()
+    {
+        var newUser = new User(document.getElementById("FirstName").value, document.getElementById("lastName").value, document.getElementById("emailAddress").value.substring(0, document.getElementById("emailAddress").value.indexOf("@")), document.getElementById("emailAddress").value, document.getElementById("password").value);
+        console.log(newUser);
+        document.getElementById("registerForm").reset();
+    }
+    
     window.addEventListener("load", Start);
 })(app || (app = {}));
 
